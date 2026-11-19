@@ -1,6 +1,6 @@
 [project]
 name = "dmvwatch"
-version = "0.1.0"
+version = "0.2.0"
 description = "Watches DMV reservation calendars for cancelled appointments"
 requires-python = ">=3.12"
 dependencies = [
