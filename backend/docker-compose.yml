@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: dmvwatch
+      POSTGRES_PASSWORD: dmvwatch
+      POSTGRES_DB: dmvwatch
+    ports: ["5432:5432"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dmvwatch"]
+      interval: 5s
+      retries: 10
+
+  cache:
+    image: redis:7-alpine
+    ports: ["6379:6379"]
