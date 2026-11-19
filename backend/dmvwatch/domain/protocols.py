@@ -1,5 +1,6 @@
 """The seams. Services depend on these, never on concrete adapters."""
 
+import uuid
 from collections.abc import Sequence
 from datetime import UTC, datetime
 from typing import Protocol
@@ -24,6 +25,21 @@ class SlotSource(Protocol):
         office: Office,
         transaction_type: TransactionType,
     ) -> Sequence[Slot]: ...
+
+
+class ObservationRepository(Protocol):
+    async def record_sweep(
+        self,
+        sweep_id: uuid.UUID,
+        slots: Sequence[Slot],
+        observed_at: datetime,
+    ) -> None: ...
+
+    async def latest_slot_times(
+        self,
+        office: Office,
+        transaction_type: TransactionType,
+    ) -> set[datetime]: ...
 
 
 class SystemClock:
