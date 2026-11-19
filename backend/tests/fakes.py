@@ -141,7 +141,5 @@ class InMemoryWatchRepository:
     async def forget_credential(self, watch_id: uuid.UUID) -> None:
         self.credentials.pop(watch_id, None)
 
-    async def mute_office(
-        self, watch_id: uuid.UUID, office_id: str, muted_at: datetime
-    ) -> None:
+    async def mute_office(self, watch_id: uuid.UUID, office_id: str, muted_at: datetime) -> None:
         self.mutes.append((watch_id, office_id))

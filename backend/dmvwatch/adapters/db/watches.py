@@ -61,9 +61,7 @@ class SqlWatchRepository:
         await self._session.execute(delete(Credential).where(Credential.watch_id == watch_id))
         await self._session.commit()
 
-    async def mute_office(
-        self, watch_id: uuid.UUID, office_id: str, muted_at: datetime
-    ) -> None:
+    async def mute_office(self, watch_id: uuid.UUID, office_id: str, muted_at: datetime) -> None:
         statement = (
             insert(WatchOfficeMute)
             .values(
