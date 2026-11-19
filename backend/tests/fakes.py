@@ -4,7 +4,14 @@ import uuid
 from collections.abc import Sequence
 from datetime import datetime, timedelta
 
-from dmvwatch.domain.models import Office, Slot, TransactionType
+from dmvwatch.domain.models import (
+    CodeCheck,
+    Office,
+    Slot,
+    TransactionType,
+    WatchStatus,
+)
+from dmvwatch.security.codes import EncryptedCode
 
 
 class FakeClock:
@@ -75,3 +82,66 @@ class InMemoryObservationRepository:
             return set()
         newest_sweep = matching[-1][0]
         return {slot.starts_at for sweep_id, slot in matching if sweep_id == newest_sweep}
+
+
+class FakeCodeValidator:
+    def __init__(self, state_code: str, result: CodeCheck) -> None:
+        self._state_code = state_code
+        self._result = result
+        self.checked: list[str] = []
+
+    @property
+    def state_code(self) -> str:
+        return self._state_code
+
+    async def check(self, access_code: str) -> CodeCheck:
+        self.checked.append(access_code)
+        return self._result
+
+
+class RecordingNotifier:
+    def __init__(self) -> None:
+        self.sent: list[tuple[str, str, str]] = []
+
+    async def send(self, to: str, subject: str, body: str) -> None:
+        self.sent.append((to, subject, body))
+
+
+class InMemoryWatchRepository:
+    def __init__(self) -> None:
+        self.watches: dict[uuid.UUID, dict[str, object]] = {}
+        self.credentials: dict[uuid.UUID, EncryptedCode] = {}
+        self.mutes: list[tuple[uuid.UUID, str]] = []
+
+    async def create(
+        self,
+        email: str,
+        state_code: str,
+        transaction_type: TransactionType,
+        encrypted_code: EncryptedCode,
+        created_at: datetime,
+    ) -> uuid.UUID:
+        watch_id = uuid.uuid4()
+        self.watches[watch_id] = {
+            "email": email,
+            "state_code": state_code,
+            "transaction_type": transaction_type,
+            "status": WatchStatus.PENDING_CONFIRMATION,
+            "created_at": created_at,
+        }
+        self.credentials[watch_id] = encrypted_code
+        return watch_id
+
+    async def set_status(self, watch_id: uuid.UUID, status: WatchStatus) -> bool:
+        if watch_id not in self.watches:
+            return False
+        self.watches[watch_id]["status"] = status
+        return True
+
+    async def forget_credential(self, watch_id: uuid.UUID) -> None:
+        self.credentials.pop(watch_id, None)
+
+    async def mute_office(
+        self, watch_id: uuid.UUID, office_id: str, muted_at: datetime
+    ) -> None:
+        self.mutes.append((watch_id, office_id))
