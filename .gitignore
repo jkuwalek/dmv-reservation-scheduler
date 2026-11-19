@@ -15,3 +15,6 @@ out/
 
 # planning notes, not part of the project
 docs/
+
+# local tooling
+.claude/

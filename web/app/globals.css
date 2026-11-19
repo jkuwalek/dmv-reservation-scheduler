@@ -1,0 +1,319 @@
+:root {
+  --paper: #edeff2;
+  --ink: #141c26;
+  --board: #1b2530;
+  --amber: #ffb000;
+  --muted: #6b7785;
+  --line: #c9d0d8;
+
+  --measure: 36rem;
+  --step: 1.25rem;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-archivo), system-ui, sans-serif;
+  font-size: 1rem;
+  line-height: 1.55;
+  font-variant-numeric: tabular-nums;
+}
+
+:focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 2px;
+}
+
+/* ---------- shell ---------- */
+
+.masthead {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  max-width: var(--measure);
+  margin: 0 auto;
+  padding: 1.75rem 1rem 0;
+}
+
+.wordmark {
+  font-weight: 700;
+  font-stretch: 112%;
+  letter-spacing: -0.015em;
+}
+
+.coverage {
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.page {
+  max-width: var(--measure);
+  margin: 0 auto;
+  padding: 0 1rem 5rem;
+}
+
+/* ---------- opening ---------- */
+
+.lede {
+  font-weight: 700;
+  font-stretch: 118%;
+  font-size: clamp(2.1rem, 8vw, 3.4rem);
+  line-height: 1.04;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+  margin: 3rem 0 1.25rem;
+}
+
+.standfirst {
+  max-width: 30rem;
+  margin: 0 0 2.5rem;
+  color: var(--muted);
+  font-size: 1.0625rem;
+}
+
+/* ---------- the board ---------- */
+
+.board {
+  background: var(--board);
+  color: #d5dde6;
+  border-radius: 2px;
+  padding: 1.25rem 1.25rem 1.5rem;
+  /* breaks wider than the reading column */
+  margin: 0 -1.5rem 3rem;
+}
+
+.boardHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  padding-bottom: 0.9rem;
+  margin-bottom: 0.9rem;
+  border-bottom: 1px solid rgba(213, 221, 230, 0.18);
+  font-size: 0.9375rem;
+}
+
+.boardMonth {
+  font-weight: 600;
+  font-stretch: 108%;
+  color: #eef3f8;
+}
+
+.boardOffice {
+  color: #8d9aa8;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.3rem;
+}
+
+.dayName {
+  font-size: 0.75rem;
+  color: #7a8794;
+  padding-bottom: 0.35rem;
+}
+
+.cell {
+  position: relative;
+  aspect-ratio: 1 / 0.62;
+  border: 1px solid rgba(213, 221, 230, 0.12);
+  border-radius: 1px;
+  padding: 0.3rem 0.4rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.cellDate {
+  font-size: 0.6875rem;
+  color: #717f8d;
+  line-height: 1;
+}
+
+.cellState {
+  font-size: 0.8125rem;
+  color: #4f5c6a;
+  line-height: 1;
+}
+
+.cellOpen {
+  background: var(--amber);
+  border-color: var(--amber);
+}
+
+.cellOpen .cellDate {
+  color: #6b4a00;
+}
+
+.cellOpen .cellState {
+  color: #1b1200;
+  font-weight: 700;
+  font-size: 0.9375rem;
+}
+
+/* The one moment of motion on the page: the open slot announces itself twice,
+   then stops. Nothing is hidden if it never runs. */
+@media (prefers-reduced-motion: no-preference) {
+  .cellOpen::after {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border: 2px solid var(--amber);
+    border-radius: 1px;
+    animation: announce 1.6s ease-out 0.5s 2;
+  }
+}
+
+@keyframes announce {
+  from {
+    opacity: 0.85;
+    transform: scale(1);
+  }
+  60%,
+  to {
+    opacity: 0;
+    transform: scale(1.3);
+  }
+}
+
+.boardFoot {
+  margin: 1.1rem 0 0;
+  font-size: 0.875rem;
+  color: #8d9aa8;
+}
+
+/* ---------- form ---------- */
+
+.formIntro {
+  margin: 0 0 1.75rem;
+  max-width: 30rem;
+}
+
+.field {
+  display: block;
+  margin-bottom: var(--step);
+}
+
+.label {
+  display: block;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+
+.hint {
+  display: block;
+  font-size: 0.875rem;
+  color: var(--muted);
+  font-weight: 400;
+  margin-bottom: 0.45rem;
+}
+
+.input {
+  width: 100%;
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  padding: 0.7rem 0.75rem;
+}
+
+.input:hover {
+  border-color: #a9b3be;
+}
+
+.input:focus-visible {
+  border-color: var(--ink);
+  outline-offset: 0;
+}
+
+.submit {
+  font: inherit;
+  font-weight: 700;
+  font-stretch: 106%;
+  color: var(--paper);
+  background: var(--ink);
+  border: 1px solid var(--ink);
+  border-radius: 2px;
+  padding: 0.75rem 1.4rem;
+  cursor: pointer;
+}
+
+.submit:hover:not(:disabled) {
+  background: #000;
+}
+
+.submit:disabled {
+  opacity: 0.55;
+  cursor: progress;
+}
+
+.notice {
+  margin: 1.25rem 0 0;
+  padding: 0.85rem 0.9rem;
+  border-left: 3px solid var(--ink);
+  background: #e2e6eb;
+  font-size: 0.9375rem;
+}
+
+.noticeOpen {
+  border-left-color: var(--amber);
+}
+
+.afterword {
+  margin: 3rem 0 0;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.9375rem;
+  max-width: 30rem;
+}
+
+.afterword p {
+  margin: 0 0 0.75rem;
+}
+
+.afterword p:last-child {
+  margin-bottom: 0;
+}
+
+/* ---------- small screens ---------- */
+
+@media (max-width: 30rem) {
+  .board {
+    margin-left: -0.5rem;
+    margin-right: -0.5rem;
+    padding: 1rem 0.85rem 1.15rem;
+  }
+
+  .boardHead {
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .cell {
+    aspect-ratio: 1 / 1;
+    padding: 0.25rem 0.3rem;
+  }
+
+  .cellOpen .cellState {
+    font-size: 0.8125rem;
+  }
+}
+
