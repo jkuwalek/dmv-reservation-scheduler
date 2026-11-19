@@ -5,7 +5,8 @@ from collections.abc import Sequence
 from datetime import UTC, datetime
 from typing import Protocol
 
-from dmvwatch.domain.models import Office, Slot, TransactionType
+from dmvwatch.domain.models import CodeCheck, Office, Slot, TransactionType, WatchStatus
+from dmvwatch.security.codes import EncryptedCode
 
 
 class Clock(Protocol):
@@ -40,6 +41,38 @@ class ObservationRepository(Protocol):
         office: Office,
         transaction_type: TransactionType,
     ) -> set[datetime]: ...
+
+
+class CodeValidator(Protocol):
+    """Checks an access code against one state's booking system."""
+
+    @property
+    def state_code(self) -> str: ...
+
+    async def check(self, access_code: str) -> CodeCheck: ...
+
+
+class Notifier(Protocol):
+    async def send(self, to: str, subject: str, body: str) -> None: ...
+
+
+class WatchRepository(Protocol):
+    async def create(
+        self,
+        email: str,
+        state_code: str,
+        transaction_type: TransactionType,
+        encrypted_code: EncryptedCode,
+        created_at: datetime,
+    ) -> uuid.UUID: ...
+
+    async def set_status(self, watch_id: uuid.UUID, status: WatchStatus) -> bool: ...
+
+    async def forget_credential(self, watch_id: uuid.UUID) -> None: ...
+
+    async def mute_office(
+        self, watch_id: uuid.UUID, office_id: str, muted_at: datetime
+    ) -> None: ...
 
 
 class SystemClock:

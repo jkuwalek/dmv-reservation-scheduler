@@ -1,5 +1,6 @@
 """Core types. Nothing here may import a framework or touch I/O."""
 
+import uuid
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from datetime import datetime
@@ -44,3 +45,20 @@ class SweepResult:
     @property
     def worth_notifying(self) -> bool:
         return bool(self.newly_available)
+
+
+@dataclass(frozen=True, slots=True)
+class CodeCheck:
+    """What a state's booking system says about an access code."""
+
+    accepted: bool
+    transaction_type: TransactionType | None = None
+    office_ids: Sequence[str] = ()
+    reason: str | None = None
+
+
+@dataclass(frozen=True, slots=True)
+class Enrolment:
+    watch_id: uuid.UUID
+    accepted: bool
+    reason: str | None = None
