@@ -19,7 +19,7 @@ class CrawlPolicy:
     user_agent: str
 
     def backoff_for(self, attempt: int) -> timedelta:
-        return self.base_backoff * (2 ** (attempt - 1))
+        return self.base_backoff * (1 << (attempt - 1))
 
 
 class Throttle:
